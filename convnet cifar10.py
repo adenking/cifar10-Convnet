@@ -39,7 +39,7 @@ epochs = 20
 
 dense_layers = [0]
 layer_sizes = [32]
-conv_layers = [3]
+conv_layers = [2]
 
 for dense_layer in dense_layers:
     for layer_size in layer_sizes:
