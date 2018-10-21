@@ -6,7 +6,7 @@ import numpy as np
 from keras.datasets import cifar10
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Activation, Flatten
-from tensorflow.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dropout
 from tensorflow.keras.callbacks import TensorBoard
 import time
 
@@ -39,12 +39,12 @@ epochs = 20
 
 dense_layers = [0]
 layer_sizes = [32, 64, 128]
-conv_layers = [1, 2]
+conv_layers = [0, 1, 2]
 
 for dense_layer in dense_layers:
     for layer_size in layer_sizes:
         for conv_layer in conv_layers:
-            NAME = "{}-conv-{}-nodes-{}-dense-{}".format(conv_layer, layer_size, dense_layer, int(time.time()))
+            NAME = "{}-conv-{}-nodes-{}-dense-dropout-{}".format(conv_layer, layer_size, dense_layer, int(time.time()))
             print(NAME)
 
             model = Sequential()
@@ -57,6 +57,8 @@ for dense_layer in dense_layers:
                 model.add(Conv2D(layer_size, (3, 3)))
                 model.add(Activation('relu'))
                 model.add(MaxPooling2D(pool_size=(2, 2)))
+
+            model.add(Dropout(0.2))
 
             model.add(Flatten())
 
@@ -76,6 +78,8 @@ for dense_layer in dense_layers:
 
             model.fit(X, y,
                       batch_size=32,
-                      epochs=20,
+                      epochs=epochs,
                       validation_split=0.2,
                       callbacks=[tensorboard])
+
+            model.save(f'./models/{conv_layer}-conv-{layer_size}-nodes-{dense_layer}-dense-dropout-{int(time.time())}.h5')
