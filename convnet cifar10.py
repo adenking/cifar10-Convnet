@@ -38,8 +38,8 @@ X = X / 255
 epochs = 20
 
 dense_layers = [0]
-layer_sizes = [32]
-conv_layers = [2]
+layer_sizes = [32, 64, 128]
+conv_layers = [1, 2]
 
 for dense_layer in dense_layers:
     for layer_size in layer_sizes:
