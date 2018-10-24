@@ -5,9 +5,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from keras.datasets import cifar10
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Activation, Flatten
+from tensorflow.keras.layers import Dense, Activation, Flatten, BatchNormalization
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dropout
 from tensorflow.keras.callbacks import TensorBoard
+from tensorflow.python.keras import regularizers
 import time
 
 CATEGORIES = ["airplane", "automobile", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck"]
@@ -18,7 +19,6 @@ print('x_train shape:', x_train.shape)
 print('y_train shape:', y_train.shape)
 print(x_train.shape[0], 'train samples')
 print(x_test.shape[0], 'test samples')
-
 
 plt.imshow(x_train[1])
 plt.show()
@@ -31,34 +31,35 @@ X = x_train
 y = y_train
 
 X = np.array(X).reshape(-1, IMG_SIZE, IMG_SIZE, 3)
-print(X.shape)
-print(y.shape)
+
 X = X / 255
 
 epochs = 20
 
-
-layer_size = 128
 conv_layers = 2
 
+NAME = "{}".format(int(time.time()))
 
-NAME = "{}-nodes-dropout-{}".format(layer_size, int(time.time()))
-print(NAME)
+weight_decay = 0.0001
 
 model = Sequential()
-
-model.add(Conv2D(layer_size, (3, 3), input_shape=X.shape[1:]))
+model.add(Conv2D(32, (3, 3), kernel_regularizer=regularizers.l2(weight_decay), input_shape=X.shape[1:]))
 model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-
-model.add(Conv2D(layer_size, (3, 3)))
+model.add(BatchNormalization())
+model.add(Conv2D(32, (3, 3), kernel_regularizer=regularizers.l2(weight_decay)))
 model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-
-model.add(Conv2D(layer_size, (3, 3)))
-model.add(Activation('relu'))
+model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.2))
+
+model.add(Conv2D(64, (3, 3), kernel_regularizer=regularizers.l2(weight_decay), input_shape=X.shape[1:]))
+model.add(Activation('relu'))
+model.add(BatchNormalization())
+model.add(Conv2D(64, (3, 3), kernel_regularizer=regularizers.l2(weight_decay)))
+model.add(Activation('relu'))
+model.add(BatchNormalization())
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.3))
 
 model.add(Flatten())
 
@@ -78,4 +79,4 @@ model.fit(X, y,
           validation_split=0.2,
           callbacks=[tensorboard])
 
-model.save(f'./models/{conv_layer}-conv-{layer_size}-nodes-{dense_layer}-dense-dropout-{int(time.time())}.h5')
+model.save(f'{NAME}.h5')
