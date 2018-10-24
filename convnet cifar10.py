@@ -74,7 +74,7 @@ model.add(Dropout(0.4))
 model.add(Flatten())
 
 model.add(Dense(10))
-model.add(Activation('sigmoid'))
+model.add(Activation('softmax'))
 
 tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
 
