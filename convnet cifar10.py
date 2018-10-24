@@ -43,23 +43,33 @@ NAME = "{}".format(int(time.time()))
 weight_decay = 0.0001
 
 model = Sequential()
-model.add(Conv2D(32, (3, 3), kernel_regularizer=regularizers.l2(weight_decay), input_shape=X.shape[1:]))
+model.add(Conv2D(32, (3, 3), padding='same', kernel_regularizer=regularizers.l2(weight_decay), input_shape=X.shape[1:]))
 model.add(Activation('relu'))
 model.add(BatchNormalization())
-model.add(Conv2D(32, (3, 3), kernel_regularizer=regularizers.l2(weight_decay)))
+model.add(Conv2D(32, (3, 3), padding='same',  kernel_regularizer=regularizers.l2(weight_decay)))
 model.add(Activation('relu'))
 model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.2))
 
-model.add(Conv2D(64, (3, 3), kernel_regularizer=regularizers.l2(weight_decay), input_shape=X.shape[1:]))
+model.add(Conv2D(64, (3, 3), padding='same', kernel_regularizer=regularizers.l2(weight_decay)))
 model.add(Activation('relu'))
 model.add(BatchNormalization())
-model.add(Conv2D(64, (3, 3), kernel_regularizer=regularizers.l2(weight_decay)))
+model.add(Conv2D(64, (3, 3), padding='same', kernel_regularizer=regularizers.l2(weight_decay)))
 model.add(Activation('relu'))
 model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size=(2, 2)))
+# larger convnets need larger dropout to prevent overfitting
 model.add(Dropout(0.3))
+
+model.add(Conv2D(128, (3, 3), padding='same', kernel_regularizer=regularizers.l2(weight_decay)))
+model.add(Activation('relu'))
+model.add(BatchNormalization())
+model.add(Conv2D(128, (3, 3), padding='same', kernel_regularizer=regularizers.l2(weight_decay)))
+model.add(Activation('relu'))
+model.add(BatchNormalization())
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.4))
 
 model.add(Flatten())
 
